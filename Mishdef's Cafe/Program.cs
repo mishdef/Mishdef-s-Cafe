@@ -11,10 +11,10 @@ namespace Mishdef_s_Cafe
 {
     internal class Program
     {
-        public static string[][] itemsAndCost = new string[2][]
+        static string[][] itemsAndCost = new string[2][]
             {
-            new string[] {},
-            new string[] {},
+            new string[0] {},
+            new string[0] {},
             };
 
         static void Main(string[] args)
@@ -51,6 +51,7 @@ namespace Mishdef_s_Cafe
                             }
                         case 2:
                             {
+                                MenuDeleteItem();
                                 break;
                             }
                         case 3:
@@ -134,6 +135,48 @@ namespace Mishdef_s_Cafe
             {
                 return "An error occurred while adding the item: " + ex.Message;
             }
+        }
+
+        static void MenuDeleteItem()
+        {
+            if (itemsAndCost[0].Length == 0)
+            {
+                MessageBox.Show("No items to remove.", "Error", Buttons.Ok);
+                return;
+            }
+
+            Console.Clear();
+
+            Console.WriteLine("Items available to remove:");
+            for (int i = 0; i < itemsAndCost[0].Length; i++)
+            {
+                Console.WriteLine($"{i + 1}. {itemsAndCost[0][i]} - {itemsAndCost[1][i]}$");
+            }
+            int itemIndex = InputInt("Enter the number of the item to remove: ", InputType.With, 1, itemsAndCost[0].Length) - 1;
+            
+            MessageBox.Show(DeleteItem(itemIndex), "Message", Buttons.Ok);
+        }
+
+        static string DeleteItem(int itemIndex)
+        {
+            if (itemIndex < 0 || itemIndex >= itemsAndCost[0].Length)
+            {
+                return "Invalid item index.";
+            }
+
+            string removedItem = itemsAndCost[0][itemIndex];
+            double removedCost = double.Parse(itemsAndCost[1][itemIndex]);
+
+            for (int i = itemIndex; i < itemsAndCost[0].Length - 1; i++)
+            {
+                itemsAndCost[0][i] = itemsAndCost[0][i + 1];
+                itemsAndCost[1][i] = itemsAndCost[1][i + 1];
+            }
+
+            Array.Resize(ref itemsAndCost[0], itemsAndCost[0].Length - 1);
+            Array.Resize(ref itemsAndCost[1], itemsAndCost[1].Length - 1);
+
+            return $"Item '{removedItem}' with cost {removedCost:F2}$ removed successfully.";
         }
     }
 }
