@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using static MyFunctions.Tools;
 using static MyFunctions.MessageBox;
 using MyFunctions;
@@ -20,8 +21,9 @@ namespace Mishdef_s_Cafe
 
         static void Main(string[] args)
         {
-
             Console.OutputEncoding = Encoding.UTF8;
+            Console.Title = "Mishdef's Cafe   ||   Stadnikov Michailo 611п";
+
             do
             {
                 try
@@ -41,7 +43,7 @@ namespace Mishdef_s_Cafe
                     Console.WriteLine("┃ └────────────────────┘ ┃");
                     Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━┛");
 
-                    switch (InputInt("\nEnter your choice: "))
+                    switch (InputInt("\nEnter your choice: ", InputType.With, 1, 7))
                     {
                         case 1:
                             {
@@ -70,10 +72,12 @@ namespace Mishdef_s_Cafe
                             }
                         case 6:
                             {
+                                MenuWriteToFile();
                                 break;
                             }
                         case 7:
                             {
+                                MenuReadFromFile();
                                 break;
                             }
                         case 0:
@@ -206,7 +210,7 @@ namespace Mishdef_s_Cafe
             Console.WriteLine(" 2. Input percentage");
             Console.WriteLine(" 3. Without tip");
 
-            switch (InputInt("\nEnter your choice: ", InputType.With, 0, 3))
+            switch (InputInt("\nEnter your choice: ", InputType.With, 1, 3))
             {
                 case 1:
                     double amount = InputDouble("Enter tip amount: ", InputType.With, 0);
@@ -302,6 +306,83 @@ namespace Mishdef_s_Cafe
             itemsAndCost[1] = new string[0];
             tipAmount = 0.0;
             return "All items and tips have been cleared.";
+        }
+
+        static void MenuWriteToFile()
+        {
+            if (itemsAndCost[0].Length == 0)
+            {
+                MessageBox.Show("No items to save.", "Message", Buttons.Ok);
+                return;
+            }
+            string filePath = InputFileName("Enter file name to save data: ", ".txt");
+            MessageBox.Show(WriteToFile(filePath), "Message", Buttons.Ok);
+        }
+
+        static string WriteToFile(string filePath)
+        {
+            try
+            {
+                using (FileStream file = new FileStream(filePath, FileMode.Create))
+                using (StreamWriter writer = new StreamWriter(file))
+                {
+                    for (int i = 0; i < itemsAndCost[0].Length; i++)
+                    {
+                        writer.WriteLine($"{itemsAndCost[0][i]}\t{itemsAndCost[1][i]}");
+                    }
+                }
+                return $"Data saved successfully to {filePath}.";
+            }
+            catch (Exception ex)
+            {
+                return $"Error saving data: {ex.Message}";
+            }
+        }
+
+        static void MenuReadFromFile()
+        {
+            string filePath = InputFileName("Enter file name to load data: ", ".txt");
+            MessageBox.Show(ReadFromFile(filePath), "Message", Buttons.Ok);
+        }
+
+        static string ReadFromFile(string filePath)
+        {
+            ClearAllItems();
+
+            try
+            {
+                if (!File.Exists(filePath))
+                {
+                    return $"File {filePath} does not exist.";
+                }
+
+                using (FileStream file = new FileStream(filePath, FileMode.Open))
+                using (StreamReader reader = new StreamReader(file))
+                {
+                    if (file.Length == 0)
+                    {
+                        return $"File {filePath} is empty.";
+                    }
+
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] parts = line.Split('\t');
+                        if (parts.Length == 2)
+                        {
+                            Array.Resize(ref itemsAndCost[0], itemsAndCost[0].Length + 1);
+                            Array.Resize(ref itemsAndCost[1], itemsAndCost[1].Length + 1);
+                            itemsAndCost[0][itemsAndCost[0].Length - 1] = parts[0];
+                            itemsAndCost[1][itemsAndCost[1].Length - 1] = parts[1];
+                        }
+                    }
+                    return $"Data loaded successfully from {filePath}.";
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Error loading data: {ex.Message}";
+            }
         }
     }
 }
