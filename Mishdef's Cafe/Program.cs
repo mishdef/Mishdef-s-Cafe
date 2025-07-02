@@ -26,8 +26,6 @@ namespace Mishdef_s_Cafe
             {
                 try
                 {
-                    Console.Clear();
-
                     Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━┓");
                     Console.WriteLine("┃ ┌────────────────────┐ ┃");
                     Console.WriteLine("┃ │   Mishdef's Cafe   │ ┃");
@@ -67,6 +65,7 @@ namespace Mishdef_s_Cafe
                             }
                         case 5:
                             {
+                                MenuClearAllItems();
                                 break;
                             }
                         case 6:
@@ -104,7 +103,10 @@ namespace Mishdef_s_Cafe
                 return;
             }
 
-            Console.Clear();
+            if (tipAmount != 0)
+            {
+                MessageBox.Show("Tip are gone be reset to 0.", "Warning", Buttons.None);
+            }
 
             string itemName;
             do
@@ -118,6 +120,7 @@ namespace Mishdef_s_Cafe
             } while (string.IsNullOrWhiteSpace(itemName) || itemName.Length < 3 || itemName.Length > 20);
             double itemCost = InputDouble("Enter item cost: ", InputType.Without, 0);
 
+            tipAmount = 0.0;
             MessageBox.Show(AddItem(itemName, itemCost), "Message", Buttons.Ok);
         }
 
@@ -147,8 +150,6 @@ namespace Mishdef_s_Cafe
                 MessageBox.Show("No items to remove.", "Error", Buttons.Ok);
                 return;
             }
-
-            Console.Clear();
 
             Console.WriteLine("Items available to remove:");
             DrawLine(40);
@@ -193,8 +194,6 @@ namespace Mishdef_s_Cafe
 
         static void MenuAddTip()
         {
-            Console.Clear();
-
             if (itemsAndCost[1].Length == 0)
             {
                 MessageBox.Show("No items available to calculate the tip.", "Message", Buttons.Ok);
@@ -202,7 +201,7 @@ namespace Mishdef_s_Cafe
             }
 
             BoxItem($"Curent tip: {tipAmount}$");
-            
+
             Console.WriteLine(" 1. Input amount");
             Console.WriteLine(" 2. Input percentage");
             Console.WriteLine(" 3. Without tip");
@@ -249,7 +248,6 @@ namespace Mishdef_s_Cafe
 
         static void DisplayBill()
         {
-            Console.Clear();
             if (itemsAndCost[0].Length == 0)
             {
                 MessageBox.Show("No items in the bill.", "Message", Buttons.Ok);
@@ -278,6 +276,32 @@ namespace Mishdef_s_Cafe
             Console.CursorVisible = false;
             Console.ReadKey();
             Console.CursorVisible = true;
+        }
+
+        static void MenuClearAllItems()
+        {
+            if (itemsAndCost[0].Length == 0)
+            {
+                MessageBox.Show("No items to clear.", "Message", Buttons.Ok);
+                return;
+            }
+            if (MessageBox.Show("Are you sure you want to clear items?", "Question", Buttons.YesNo) == Button.Yes)
+            {
+                MessageBox.Show(ClearAllItems(), "Message");
+            }
+            else
+            {
+                MessageBox.Show("Clearing items has been canceled.", "Message");
+                return;
+            }
+        }
+
+        static string ClearAllItems()
+        {
+            itemsAndCost[0] = new string[0];
+            itemsAndCost[1] = new string[0];
+            tipAmount = 0.0;
+            return "All items and tips have been cleared.";
         }
     }
 }

@@ -150,7 +150,7 @@ namespace MyFunctions
                 case Buttons.Ok:
                     return "Ok (Enter)";
                 case Buttons.YesNo:
-                    return "Так (Y) / Ні (N)";
+                    return "Yes (Y) / No (N)";
                 case Buttons.None:
                 default:
                     return null;
