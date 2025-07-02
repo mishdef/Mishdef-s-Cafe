@@ -16,7 +16,7 @@ namespace Mishdef_s_Cafe
             new string[0] {},
             new string[0] {},
             };
-        static double tip = 0.0;
+        static double tipAmount = 0.0;
 
         static void Main(string[] args)
         {
@@ -62,6 +62,7 @@ namespace Mishdef_s_Cafe
                             }
                         case 4:
                             {
+                                DisplayBill();
                                 break;
                             }
                         case 5:
@@ -200,7 +201,7 @@ namespace Mishdef_s_Cafe
                 return;
             }
 
-            BoxItem($"Curent tip: {tip}$");
+            BoxItem($"Curent tip: {tipAmount}$");
             
             Console.WriteLine(" 1. Input amount");
             Console.WriteLine(" 2. Input percentage");
@@ -217,7 +218,7 @@ namespace Mishdef_s_Cafe
                     MessageBox.Show(AddTipPercentage(percentage), "Message", Buttons.Ok);
                     break;
                 case 3:
-                    tip = 0.0;
+                    tipAmount = 0.0;
                     MessageBox.Show("Tip has been set to 0.0$", "Message", Buttons.Ok);
                     return;
                 default:
@@ -228,8 +229,8 @@ namespace Mishdef_s_Cafe
 
         static string AddTipAmount(double amount)
         {
-            tip = amount;
-            return $"Tip {tip}$ are set";
+            tipAmount = amount;
+            return $"Tip {tipAmount}$ are set";
         }
 
         static string AddTipPercentage(double percentage)
@@ -241,9 +242,42 @@ namespace Mishdef_s_Cafe
                 totalCost += double.Parse(cost);
             }
 
-            tip = totalCost * (percentage / 100);
+            tipAmount = totalCost * (percentage / 100);
 
-            return $"Tip {tip:F2}$ are set based on {percentage}% of the total cost.";
+            return $"Tip {tipAmount:F2}$ are set based on {percentage}% of the total cost.";
+        }
+
+        static void DisplayBill()
+        {
+            Console.Clear();
+            if (itemsAndCost[0].Length == 0)
+            {
+                MessageBox.Show("No items in the bill.", "Message", Buttons.Ok);
+                return;
+            }
+
+            double totalCost = 0.0;
+
+            Console.WriteLine("Description                    Price");
+            Console.WriteLine("------------------------- ----------");
+            for (int i = 0; i < itemsAndCost[0].Length; i++)
+            {
+                Console.WriteLine($"{itemsAndCost[0][i].PadRight(25)} {('$' + itemsAndCost[1][i]).PadLeft(10)}");
+                totalCost += double.Parse(itemsAndCost[1][i]);
+            }
+
+            double gstAmount = totalCost * 0.05;
+
+            Console.WriteLine("\n------------------------- ----------");
+            Console.WriteLine($"{"Net Total".PadLeft(25)} {('$' + totalCost.ToString("F2")).PadLeft(10)}");
+            Console.WriteLine($"{"Tip Amount".PadLeft(25)} {('$' + tipAmount.ToString("F2")).PadLeft(10)}");
+            Console.WriteLine($"{"GST Amount".PadLeft(25)} {('$' + gstAmount.ToString("F2")).PadLeft(10)}");
+            Console.WriteLine($"{"Total Amount".PadLeft(25)} {('$' + (totalCost + tipAmount + gstAmount).ToString("F2")).PadLeft(10)}");
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.CursorVisible = false;
+            Console.ReadKey();
+            Console.CursorVisible = true;
         }
     }
 }
