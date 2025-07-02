@@ -16,6 +16,7 @@ namespace Mishdef_s_Cafe
             new string[0] {},
             new string[0] {},
             };
+        static double tip = 0.0;
 
         static void Main(string[] args)
         {
@@ -56,6 +57,7 @@ namespace Mishdef_s_Cafe
                             }
                         case 3:
                             {
+                                MenuAddTip();
                                 break;
                             }
                         case 4:
@@ -115,7 +117,7 @@ namespace Mishdef_s_Cafe
             } while (string.IsNullOrWhiteSpace(itemName) || itemName.Length < 3 || itemName.Length > 20);
             double itemCost = InputDouble("Enter item cost: ", InputType.Without, 0);
 
-            MessageBox.Show(AddItem(itemName, itemCost),"Message", Buttons.Ok);
+            MessageBox.Show(AddItem(itemName, itemCost), "Message", Buttons.Ok);
         }
 
         static string AddItem(string itemName, double itemCost)
@@ -148,12 +150,21 @@ namespace Mishdef_s_Cafe
             Console.Clear();
 
             Console.WriteLine("Items available to remove:");
+            DrawLine(40);
             for (int i = 0; i < itemsAndCost[0].Length; i++)
             {
                 Console.WriteLine($"{i + 1}. {itemsAndCost[0][i]} - {itemsAndCost[1][i]}$");
             }
-            int itemIndex = InputInt("Enter the number of the item to remove: ", InputType.With, 1, itemsAndCost[0].Length) - 1;
-            
+            Console.WriteLine("\n0. Cancel");
+            DrawLine(40);
+
+            int itemIndex = InputInt("Enter the number of the item to remove: ", InputType.With, 0, itemsAndCost[0].Length) - 1;
+
+            if (itemIndex == -1)
+            {
+                return;
+            }
+
             MessageBox.Show(DeleteItem(itemIndex), "Message", Buttons.Ok);
         }
 
@@ -177,6 +188,62 @@ namespace Mishdef_s_Cafe
             Array.Resize(ref itemsAndCost[1], itemsAndCost[1].Length - 1);
 
             return $"Item '{removedItem}' with cost {removedCost:F2}$ removed successfully.";
+        }
+
+        static void MenuAddTip()
+        {
+            Console.Clear();
+
+            if (itemsAndCost[1].Length == 0)
+            {
+                MessageBox.Show("No items available to calculate the tip.", "Message", Buttons.Ok);
+                return;
+            }
+
+            BoxItem($"Curent tip: {tip}$");
+            
+            Console.WriteLine(" 1. Input amount");
+            Console.WriteLine(" 2. Input percentage");
+            Console.WriteLine(" 3. Without tip");
+
+            switch (InputInt("\nEnter your choice: ", InputType.With, 0, 3))
+            {
+                case 1:
+                    double amount = InputDouble("Enter tip amount: ", InputType.With, 0);
+                    MessageBox.Show(AddTipAmount(amount), "Message", Buttons.Ok);
+                    break;
+                case 2:
+                    double percentage = InputDouble("Enter tip percentage (0-100): ", InputType.With, 0);
+                    MessageBox.Show(AddTipPercentage(percentage), "Message", Buttons.Ok);
+                    break;
+                case 3:
+                    tip = 0.0;
+                    MessageBox.Show("Tip has been set to 0.0$", "Message", Buttons.Ok);
+                    return;
+                default:
+                    Console.WriteLine("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+
+        static string AddTipAmount(double amount)
+        {
+            tip = amount;
+            return $"Tip {tip}$ are set";
+        }
+
+        static string AddTipPercentage(double percentage)
+        {
+            double totalCost = 0.0;
+
+            foreach (var cost in itemsAndCost[1])
+            {
+                totalCost += double.Parse(cost);
+            }
+
+            tip = totalCost * (percentage / 100);
+
+            return $"Tip {tip:F2}$ are set based on {percentage}% of the total cost.";
         }
     }
 }
