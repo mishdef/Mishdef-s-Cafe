@@ -18,6 +18,7 @@ namespace Mishdef_s_Cafe
             new string[0] {},
             };
         static double tipAmount = 0.0;
+        static bool isDataSaved = true;
 
         static void Main(string[] args)
         {
@@ -28,8 +29,9 @@ namespace Mishdef_s_Cafe
             {
                 try
                 {
-                    Console.WriteLine("┏━━━━━━━━━━━━━━━━━━━━━━━━┓");
-                    Console.WriteLine("┃ ┌────────────────────┐ ┃");
+                    Console.WriteLine("┏━┯━━━━━━━━━━━━━━━━━━━━┯━┓");
+                    Console.WriteLine("┠─┼────────────────────┼─┨");
+                    Console.WriteLine("┃ │                    │ ┃");
                     Console.WriteLine("┃ │   Mishdef's Cafe   │ ┃");
                     Console.WriteLine("┃ │ ------------------ │ ┃");
                     Console.WriteLine("┃ │ 1. Add Item        │ ┃");
@@ -40,10 +42,11 @@ namespace Mishdef_s_Cafe
                     Console.WriteLine("┃ │ 6. Save to file    │ ┃");
                     Console.WriteLine("┃ │ 7. Load from file  │ ┃");
                     Console.WriteLine("┃ │ 0. Exit            │ ┃");
-                    Console.WriteLine("┃ └────────────────────┘ ┃");
-                    Console.WriteLine("┗━━━━━━━━━━━━━━━━━━━━━━━━┛");
+                    Console.WriteLine("┃ │                    │ ┃");
+                    Console.WriteLine("┠─┼────────────────────┼─┨");
+                    Console.WriteLine("┗━┷━━━━━━━━━━━━━━━━━━━━┷━┛");
 
-                    switch (InputInt("\nEnter your choice: ", InputType.With, 1, 7))
+                    switch (InputInt("\nEnter your choice: ", InputType.With, 0, 7))
                     {
                         case 1:
                             {
@@ -82,8 +85,21 @@ namespace Mishdef_s_Cafe
                             }
                         case 0:
                             {
-                                Console.WriteLine("Exiting the program. Goodbye!");
-                                return;
+                                if (isDataSaved)
+                                {
+                                    Console.WriteLine("Exiting the program. Goodbye!");
+                                    return;
+                                }
+                                else
+                                {
+                                    if(MessageBox.Show("You have unsaved data or changes! Do you want to exit without saving?", "Message", Buttons.YesNo) == Button.Yes)
+                                    {
+                                        Console.WriteLine("Exiting the program. Goodbye!");
+                                        return;
+                                    }
+                                    Console.WriteLine("Comming back to main menu....");
+                                    break;
+                                }
                             }
                         default:
                             {
@@ -117,14 +133,15 @@ namespace Mishdef_s_Cafe
             {
                 Console.Write("Enter item name: ");
                 itemName = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(itemName) || itemName.Length < 3 || itemName.Length > 25)
+                if (string.IsNullOrWhiteSpace(itemName) || itemName.Length < 3 || itemName.Length > 20)
                 {
-                    Console.WriteLine("Item name must be between 3 and 25 characters long. Please try again.");
+                    Console.WriteLine("Item name must be between 3 and 20 characters long. Please try again.");
                 }
             } while (string.IsNullOrWhiteSpace(itemName) || itemName.Length < 3 || itemName.Length > 20);
             double itemCost = InputDouble("Enter item cost: ", InputType.Without, 0);
 
             tipAmount = 0.0;
+
             MessageBox.Show(AddItem(itemName, itemCost), "Message", Buttons.Ok);
         }
 
@@ -138,6 +155,8 @@ namespace Mishdef_s_Cafe
 
                 itemsAndCost[0][currentItemsCount] = itemName;
                 itemsAndCost[1][currentItemsCount] = itemCost.ToString("F2");
+
+                isDataSaved = false;
 
                 return $"Item '{itemName}' with cost {itemCost:F2}$ added successfully.";
             }
@@ -193,6 +212,8 @@ namespace Mishdef_s_Cafe
             Array.Resize(ref itemsAndCost[0], itemsAndCost[0].Length - 1);
             Array.Resize(ref itemsAndCost[1], itemsAndCost[1].Length - 1);
 
+            isDataSaved = false;
+
             return $"Item '{removedItem}' with cost {removedCost:F2}$ removed successfully.";
         }
 
@@ -217,7 +238,7 @@ namespace Mishdef_s_Cafe
                     MessageBox.Show(AddTipAmount(amount), "Message", Buttons.Ok);
                     break;
                 case 2:
-                    double percentage = InputDouble("Enter tip percentage (0-100): ", InputType.With, 0);
+                    double percentage = InputDouble("Enter tip percentage: ", InputType.With, 0);
                     MessageBox.Show(AddTipPercentage(percentage), "Message", Buttons.Ok);
                     break;
                 case 3:
@@ -260,7 +281,7 @@ namespace Mishdef_s_Cafe
 
             double totalCost = 0.0;
 
-            Console.WriteLine("Description                    Price");
+            Console.WriteLine("\nDescription                    Price");
             Console.WriteLine("------------------------- ----------");
             for (int i = 0; i < itemsAndCost[0].Length; i++)
             {
@@ -270,7 +291,7 @@ namespace Mishdef_s_Cafe
 
             double gstAmount = totalCost * 0.05;
 
-            Console.WriteLine("\n------------------------- ----------");
+            Console.WriteLine("------------------------- ----------");
             Console.WriteLine($"{"Net Total".PadLeft(25)} {('$' + totalCost.ToString("F2")).PadLeft(10)}");
             Console.WriteLine($"{"Tip Amount".PadLeft(25)} {('$' + tipAmount.ToString("F2")).PadLeft(10)}");
             Console.WriteLine($"{"GST Amount".PadLeft(25)} {('$' + gstAmount.ToString("F2")).PadLeft(10)}");
@@ -305,6 +326,9 @@ namespace Mishdef_s_Cafe
             itemsAndCost[0] = new string[0];
             itemsAndCost[1] = new string[0];
             tipAmount = 0.0;
+
+            isDataSaved = true;
+
             return "All items and tips have been cleared.";
         }
 
@@ -315,7 +339,17 @@ namespace Mishdef_s_Cafe
                 MessageBox.Show("No items to save.", "Message", Buttons.Ok);
                 return;
             }
+
             string filePath = InputFileName("Enter file name to save data: ", ".txt");
+
+            if (File.Exists(filePath))
+            {
+                if (MessageBox.Show($"File {filePath} already exists. Do you want to overwrite it?", "Question", Buttons.YesNo) == Button.No)
+                {
+                    MessageBox.Show("Saving data has been canceled.");
+                }
+            }
+
             MessageBox.Show(WriteToFile(filePath), "Message", Buttons.Ok);
         }
 
@@ -331,6 +365,9 @@ namespace Mishdef_s_Cafe
                         writer.WriteLine($"{itemsAndCost[0][i]}\t{itemsAndCost[1][i]}");
                     }
                 }
+
+                isDataSaved = true;
+
                 return $"Data saved successfully to {filePath}.";
             }
             catch (Exception ex)
@@ -341,14 +378,19 @@ namespace Mishdef_s_Cafe
 
         static void MenuReadFromFile()
         {
+            if (itemsAndCost[0].Length != 0)
+            {
+                if (MessageBox.Show("All your previous data will be cleard. Continue?", "Question", Buttons.YesNo) == Button.No)
+                {
+                    return;
+                }
+            }
             string filePath = InputFileName("Enter file name to load data: ", ".txt");
             MessageBox.Show(ReadFromFile(filePath), "Message", Buttons.Ok);
         }
 
         static string ReadFromFile(string filePath)
         {
-            ClearAllItems();
-
             try
             {
                 if (!File.Exists(filePath))
@@ -364,6 +406,8 @@ namespace Mishdef_s_Cafe
                         return $"File {filePath} is empty.";
                     }
 
+                    ClearAllItems();
+
                     string line;
                     while ((line = reader.ReadLine()) != null)
                     {
@@ -376,6 +420,9 @@ namespace Mishdef_s_Cafe
                             itemsAndCost[1][itemsAndCost[1].Length - 1] = parts[1];
                         }
                     }
+
+                    isDataSaved = true;
+
                     return $"Data loaded successfully from {filePath}.";
                 }
             }

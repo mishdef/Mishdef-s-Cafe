@@ -17,7 +17,7 @@ namespace MyFunctions
         private const int MIN_CONTENT_WIDTH = 20;
         private const int PADDING_HORIZONTAL_TEXT = 2;
 
-        public static Button Show(string message, string header = "Повідомлення", Buttons buttons = Buttons.None)
+        public static Button Show(string message, string header = "Message", Buttons buttons = Buttons.None)
         {
             string actualHeader = " " + header.ToUpper() + " ";
             string actualButtonsString = ButtonsToString(buttons);
@@ -176,8 +176,8 @@ namespace MyFunctions
             int num;
             string maxStr, minStr;
 
-            if (min == int.MinValue) minStr = "мінімального значення int"; else minStr = min.ToString();
-            if (max == int.MaxValue) maxStr = "максимального значення int"; else maxStr = max.ToString();
+            if (min == int.MinValue) minStr = "minimum int value"; else minStr = min.ToString();
+            if (max == int.MaxValue) maxStr = "maximum int value"; else maxStr = max.ToString();
 
             do
             {
@@ -187,18 +187,18 @@ namespace MyFunctions
                     num = int.Parse(Console.ReadLine());
                     if (inputType == InputType.With)
                     {
-                        if (num < min || num > max) throw new ArgumentException("включно");
+                        if (num < min || num > max) throw new ArgumentException("inclusive");
                     }
                     if (inputType == InputType.Without)
                     {
-                        if (num <= min || num >= max) throw new ArgumentException("не включно");
+                        if (num <= min || num >= max) throw new ArgumentException("exclusive");
                     }
                     break;
                 }
-                catch (ArgumentException ex) { Console.WriteLine(" ПОМИЛКА! Число повинно бути в діапазоні від " + minStr + " до " + maxStr + $" ({ex.Message}). Спробуйте ще раз!"); }
-                catch (FormatException) { Console.WriteLine(" ПОМИЛКА! Невірний формат! Спробуйте ще раз!"); }
-                catch (OverflowException) { Console.WriteLine(" ПОМИЛКА! Занадто велике число! Спробуйте ще раз!"); }
-                catch (Exception ex) { Console.WriteLine($" ПОМИЛКА! {ex.Message} Спробуйте ще раз!"); }
+                catch (ArgumentException ex) { Console.WriteLine(" ERROR! The number must be in the range from " + minStr + " to " + maxStr + $" ({ex.Message}). Please try again!"); }
+                catch (FormatException) { Console.WriteLine(" ERROR! Invalid format! Please try again!"); }
+                catch (OverflowException) { Console.WriteLine(" ERROR! Number is too large! Please try again!"); }
+                catch (Exception ex) { Console.WriteLine($" ERROR! {ex.Message} Please try again!"); }
             }
             while (true);
             return num;
@@ -209,8 +209,8 @@ namespace MyFunctions
             double num;
             string maxStr, minStr;
 
-            if (min == double.MinValue) minStr = "мінімального значення double"; else minStr = min.ToString();
-            if (max == double.MaxValue) maxStr = "максимального значення double"; else maxStr = max.ToString();
+            if (min == double.MinValue) minStr = "minimum double value"; else minStr = min.ToString();
+            if (max == double.MaxValue) maxStr = "maximum double value"; else maxStr = max.ToString();
 
             do
             {
@@ -221,18 +221,18 @@ namespace MyFunctions
 
                     if (inputType == InputType.With)
                     {
-                        if (num < min || num > max) throw new ArgumentException("включно");
+                        if (num < min || num > max) throw new ArgumentException("inclusive");
                     }
                     else
                     {
-                        if (num <= min || num >= max) throw new ArgumentException("не включно");
+                        if (num <= min || num >= max) throw new ArgumentException("exclusive");
                     }
                     break;
                 }
-                catch (ArgumentException ex) { Console.WriteLine(" ПОМИЛКА! Число повинно бути в діапазоні від " + minStr + " до " + maxStr + $" ({ex.Message}). Спробуйте ще раз!"); }
-                catch (FormatException) { Console.WriteLine(" ПОМИЛКА! Невірний формат! Спробуйте ще раз!"); }
-                catch (OverflowException) { Console.WriteLine(" ПОМИЛКА! Занадто велике число! Спробуйте ще раз!"); }
-                catch (Exception ex) { Console.WriteLine($" ПОМИЛКА! {ex.Message} Спробуйте ще раз!"); }
+                catch (ArgumentException ex) { Console.WriteLine(" ERROR! The number must be in the range from " + minStr + " to " + maxStr + $" ({ex.Message}). Please try again!"); }
+                catch (FormatException) { Console.WriteLine(" ERROR! Invalid format! Please try again!"); }
+                catch (OverflowException) { Console.WriteLine(" ERROR! Number is too large! Please try again!"); }
+                catch (Exception ex) { Console.WriteLine($" ERROR! {ex.Message} Please try again!"); }
             }
             while (true);
             return num;
@@ -246,13 +246,19 @@ namespace MyFunctions
             {
                 Console.Write(promt);
                 fileName = Console.ReadLine();
-                if (!(fileName.EndsWith(fileExtention)))
+
+                if (fileName.EndsWith(fileExtention))
                 {
-                    Console.WriteLine($"File name must end with \"{fileExtention}\". Try again.");
+                    fileName = fileName.Substring(0, fileName.Length - fileExtention.Length);
+                }
+
+                if (1 > fileName.Length || fileName.Length > 20)
+                {
+                    Console.WriteLine("File name must be between 1 and 20 characters long.");
                 }
             }
-            while (!(fileName.EndsWith(fileExtention)));
-            return fileName;
+            while ((1 > fileName.Length || fileName.Length > 20));
+            return fileName + fileExtention;
         }
     }
 }
