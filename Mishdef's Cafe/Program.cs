@@ -174,6 +174,11 @@ namespace Mishdef_s_Cafe
                 return;
             }
 
+            if (tipAmount != 0)
+            {
+                MessageBox.Show("Tip are gone be reset to 0.", "Warning", Buttons.None);
+            }
+
             Console.WriteLine("Items available to remove:");
             DrawLine(40);
             for (int i = 0; i < itemsAndCost[0].Length; i++)
@@ -213,6 +218,7 @@ namespace Mishdef_s_Cafe
             Array.Resize(ref itemsAndCost[1], itemsAndCost[1].Length - 1);
 
             isDataSaved = false;
+            tipAmount = 0;
 
             return $"Item '{removedItem}' with cost {removedCost:F2}$ removed successfully.";
         }
@@ -347,6 +353,7 @@ namespace Mishdef_s_Cafe
                 if (MessageBox.Show($"File {filePath} already exists. Do you want to overwrite it?", "Question", Buttons.YesNo) == Button.No)
                 {
                     MessageBox.Show("Saving data has been canceled.");
+                    return;
                 }
             }
 
