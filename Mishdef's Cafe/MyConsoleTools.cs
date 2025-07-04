@@ -252,12 +252,12 @@ namespace MyFunctions
                     fileName = fileName.Substring(0, fileName.Length - fileExtention.Length);
                 }
 
-                if (1 > fileName.Length || fileName.Length > 20)
+                if (1 > fileName.Length || fileName.Length > 10)
                 {
-                    Console.WriteLine("File name must be between 1 and 20 characters long.");
+                    Console.WriteLine("File name must be between 1 and 10 characters long.");
                 }
             }
-            while ((1 > fileName.Length || fileName.Length > 20));
+            while ((1 > fileName.Length || fileName.Length > 10));
             return fileName + fileExtention;
         }
     }
