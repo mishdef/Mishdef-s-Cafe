@@ -12,11 +12,9 @@ namespace Mishdef_s_Cafe
 {
     internal class Program
     {
-        static string[][] itemsAndCost = new string[2][]
-            {
-            new string[0] {},
-            new string[0] {},
-            };
+        static string[] items = new string[0];
+        static double[] costs = new double[0];
+
         static double tipAmount = 0.0;
         static bool isDataSaved = true;
 
@@ -117,7 +115,7 @@ namespace Mishdef_s_Cafe
 
         static void MenuAddItem()
         {
-            if (itemsAndCost[0].Length >= 5)
+            if (items.Length >= 5)
             {
                 MessageBox.Show("You cannot add more than 5 items.", "Error", Buttons.Ok);
                 return;
@@ -149,12 +147,12 @@ namespace Mishdef_s_Cafe
         {
             try
             {
-                int currentItemsCount = itemsAndCost[0].Length;
-                Array.Resize(ref itemsAndCost[0], currentItemsCount + 1);
-                Array.Resize(ref itemsAndCost[1], currentItemsCount + 1);
+                int currentItemsCount = items.Length;
+                Array.Resize(ref items, currentItemsCount + 1);
+                Array.Resize(ref costs, currentItemsCount + 1);
 
-                itemsAndCost[0][currentItemsCount] = itemName;
-                itemsAndCost[1][currentItemsCount] = itemCost.ToString("F2");
+                items[currentItemsCount] = itemName;
+                costs[currentItemsCount] = itemCost;
 
                 isDataSaved = false;
 
@@ -168,7 +166,7 @@ namespace Mishdef_s_Cafe
 
         static void MenuDeleteItem()
         {
-            if (itemsAndCost[0].Length == 0)
+            if (items.Length == 0)
             {
                 MessageBox.Show("No items to remove.", "Error", Buttons.Ok);
                 return;
@@ -181,14 +179,14 @@ namespace Mishdef_s_Cafe
 
             Console.WriteLine("Items available to remove:");
             DrawLine(40);
-            for (int i = 0; i < itemsAndCost[0].Length; i++)
+            for (int i = 0; i < items.Length; i++)
             {
-                Console.WriteLine($"{i + 1}. {itemsAndCost[0][i]} - {itemsAndCost[1][i]}$");
+                Console.WriteLine($"{i + 1}. {items[i]} - {costs[i]}$");
             }
             Console.WriteLine("\n0. Cancel");
             DrawLine(40);
 
-            int itemIndex = InputInt("Enter the number of the item to remove: ", InputType.With, 0, itemsAndCost[0].Length) - 1;
+            int itemIndex = InputInt("Enter the number of the item to remove: ", InputType.With, 0, items.Length) - 1;
 
             if (itemIndex == -1)
             {
@@ -196,26 +194,38 @@ namespace Mishdef_s_Cafe
             }
 
             MessageBox.Show(DeleteItem(itemIndex), "Message", Buttons.Ok);
+
+            if (items.Length != 0)
+            {
+                if (MessageBox.Show("Would you like to set a tip?", "Question", Buttons.YesNo) == Button.Yes)
+                {
+                    MenuAddTip();
+                }
+                else
+                {
+                    MessageBox.Show("Tip has been set to 0.0$", "Message", Buttons.Ok);
+                }
+            }
         }
 
         static string DeleteItem(int itemIndex)
         {
-            if (itemIndex < 0 || itemIndex >= itemsAndCost[0].Length)
+            if (itemIndex < 0 || itemIndex >= items.Length)
             {
                 return "Invalid item index.";
             }
 
-            string removedItem = itemsAndCost[0][itemIndex];
-            double removedCost = double.Parse(itemsAndCost[1][itemIndex]);
+            string removedItem = items[itemIndex];
+            double removedCost = costs[itemIndex];
 
-            for (int i = itemIndex; i < itemsAndCost[0].Length - 1; i++)
+            for (int i = itemIndex; i < items.Length - 1; i++)
             {
-                itemsAndCost[0][i] = itemsAndCost[0][i + 1];
-                itemsAndCost[1][i] = itemsAndCost[1][i + 1];
+                items[i] = items[i + 1];
+                costs[i] = costs[i + 1];
             }
 
-            Array.Resize(ref itemsAndCost[0], itemsAndCost[0].Length - 1);
-            Array.Resize(ref itemsAndCost[1], itemsAndCost[1].Length - 1);
+            Array.Resize(ref items, items.Length - 1);
+            Array.Resize(ref costs, costs.Length - 1);
 
             isDataSaved = false;
             tipAmount = 0;
@@ -225,27 +235,34 @@ namespace Mishdef_s_Cafe
 
         static void MenuAddTip()
         {
-            if (itemsAndCost[1].Length == 0)
+            if (items.Length == 0)
             {
                 MessageBox.Show("No items available to calculate the tip.", "Message", Buttons.Ok);
                 return;
             }
 
-            BoxItem($"Curent tip: {tipAmount}$");
+            double totalCost = 0.0;
 
-            Console.WriteLine(" 1. Input amount");
-            Console.WriteLine(" 2. Input percentage");
+            foreach (var value in costs)
+            {
+                totalCost += value;
+            }
+
+            BoxItem($"Curent tip: {tipAmount}$  ┃  Net Total: {totalCost}$");
+
+            Console.WriteLine(" 1. Input percentage");
+            Console.WriteLine(" 2. Input amount");
             Console.WriteLine(" 3. Without tip");
 
             switch (InputInt("\nEnter your choice: ", InputType.With, 1, 3))
             {
                 case 1:
-                    double amount = InputDouble("Enter tip amount: ", InputType.With, 0);
-                    MessageBox.Show(AddTipAmount(amount), "Message", Buttons.Ok);
-                    break;
-                case 2:
                     double percentage = InputDouble("Enter tip percentage: ", InputType.With, 0);
                     MessageBox.Show(AddTipPercentage(percentage), "Message", Buttons.Ok);
+                    break;
+                case 2:
+                    double amount = InputDouble("Enter tip amount: ", InputType.With, 0);
+                    MessageBox.Show(AddTipAmount(amount), "Message", Buttons.Ok);
                     break;
                 case 3:
                     tipAmount = 0.0;
@@ -267,9 +284,9 @@ namespace Mishdef_s_Cafe
         {
             double totalCost = 0.0;
 
-            foreach (var cost in itemsAndCost[1])
+            foreach (var amount in costs)
             {
-                totalCost += double.Parse(cost);
+                totalCost += amount;
             }
 
             tipAmount = totalCost * (percentage / 100);
@@ -279,7 +296,7 @@ namespace Mishdef_s_Cafe
 
         static void DisplayBill()
         {
-            if (itemsAndCost[0].Length == 0)
+            if (items.Length == 0)
             {
                 MessageBox.Show("No items in the bill.", "Message", Buttons.Ok);
                 return;
@@ -289,10 +306,10 @@ namespace Mishdef_s_Cafe
 
             Console.WriteLine("\nDescription               Price");
             Console.WriteLine("-------------------- ----------");
-            for (int i = 0; i < itemsAndCost[0].Length; i++)
+            for (int i = 0; i < items.Length; i++)
             {
-                Console.WriteLine($"{itemsAndCost[0][i].PadRight(20)} {('$' + itemsAndCost[1][i]).PadLeft(10)}");
-                totalCost += double.Parse(itemsAndCost[1][i]);
+                Console.WriteLine($"{items[i].PadRight(20)} {("$" + costs[i].ToString()).PadLeft(10)}");
+                totalCost += costs[i];
             }
 
             double gstAmount = totalCost * 0.05;
@@ -311,7 +328,7 @@ namespace Mishdef_s_Cafe
 
         static void MenuClearAllItems()
         {
-            if (itemsAndCost[0].Length == 0)
+            if (items.Length == 0)
             {
                 MessageBox.Show("No items to clear.", "Message", Buttons.Ok);
                 return;
@@ -329,8 +346,8 @@ namespace Mishdef_s_Cafe
 
         static string ClearAllItems()
         {
-            itemsAndCost[0] = new string[0];
-            itemsAndCost[1] = new string[0];
+            items = new string[0];
+            costs = new double[0];
             tipAmount = 0.0;
 
             isDataSaved = true;
@@ -340,7 +357,7 @@ namespace Mishdef_s_Cafe
 
         static void MenuWriteToFile()
         {
-            if (itemsAndCost[0].Length == 0)
+            if (items.Length == 0)
             {
                 MessageBox.Show("No items to save.", "Message", Buttons.Ok);
                 return;
@@ -367,9 +384,9 @@ namespace Mishdef_s_Cafe
                 using (FileStream file = new FileStream(filePath, FileMode.Create))
                 using (StreamWriter writer = new StreamWriter(file))
                 {
-                    for (int i = 0; i < itemsAndCost[0].Length; i++)
+                    for (int i = 0; i < items.Length; i++)
                     {
-                        writer.WriteLine($"{itemsAndCost[0][i]}\t{itemsAndCost[1][i]}");
+                        writer.WriteLine($"{items[i]}\t{costs[i]}");
                     }
                 }
 
@@ -385,7 +402,7 @@ namespace Mishdef_s_Cafe
 
         static void MenuReadFromFile()
         {
-            if (itemsAndCost[0].Length != 0)
+            if (items.Length != 0)
             {
                 if (MessageBox.Show("All your previous data will be cleard. Continue?", "Question", Buttons.YesNo) == Button.No)
                 {
@@ -421,10 +438,10 @@ namespace Mishdef_s_Cafe
                         string[] parts = line.Split('\t');
                         if (parts.Length == 2)
                         {
-                            Array.Resize(ref itemsAndCost[0], itemsAndCost[0].Length + 1);
-                            Array.Resize(ref itemsAndCost[1], itemsAndCost[1].Length + 1);
-                            itemsAndCost[0][itemsAndCost[0].Length - 1] = parts[0];
-                            itemsAndCost[1][itemsAndCost[1].Length - 1] = parts[1];
+                            Array.Resize(ref items, items.Length + 1);
+                            Array.Resize(ref costs, costs.Length + 1);
+                            items[items.Length - 1] = parts[0];
+                            costs[costs.Length - 1] = double.Parse(parts[1]);
                         }
                     }
 
