@@ -181,7 +181,7 @@ namespace Mishdef_s_Cafe
             DrawLine(40);
             for (int i = 0; i < items.Length; i++)
             {
-                Console.WriteLine($"{i + 1}. {items[i]} - {costs[i]}$");
+                Console.WriteLine($"{i + 1}. {items[i]} - {costs[i].ToString("F2")}$");
             }
             Console.WriteLine("\n0. Cancel");
             DrawLine(40);
