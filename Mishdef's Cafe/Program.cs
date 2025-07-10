@@ -308,7 +308,7 @@ namespace Mishdef_s_Cafe
             Console.WriteLine("-------------------- ----------");
             for (int i = 0; i < items.Length; i++)
             {
-                Console.WriteLine($"{items[i].PadRight(20)} {("$" + costs[i].ToString()).PadLeft(10)}");
+                Console.WriteLine($"{items[i].PadRight(20)} {("$" + costs[i].ToString("F2")).PadLeft(10)}");
                 totalCost += costs[i];
             }
 
