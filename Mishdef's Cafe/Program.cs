@@ -25,28 +25,28 @@ namespace Mishdef_s_Cafe
             Console.OutputEncoding = Encoding.UTF8;
             Console.Title = "Mishdef's Cafe   ||   Stadnikov Michailo 611п";
 
+            Console.WriteLine("┏━┯━━━━━━━━━━━━━━━━━━━━┯━┓");
+            Console.WriteLine("┠─┼────────────────────┼─┨");
+            Console.WriteLine("┃ │                    │ ┃");
+            Console.WriteLine("┃ │   Mishdef's Cafe   │ ┃");
+            Console.WriteLine("┃ │ ------------------ │ ┃");
+            Console.WriteLine("┃ │ 1. Add Item        │ ┃");
+            Console.WriteLine("┃ │ 2. Remove Item     │ ┃");
+            Console.WriteLine("┃ │ 3. Add Tip         │ ┃");
+            Console.WriteLine("┃ │ 4. Display Bill    │ ┃");
+            Console.WriteLine("┃ │ 5. Clear All       │ ┃");
+            Console.WriteLine("┃ │ 6. Save to file    │ ┃");
+            Console.WriteLine("┃ │ 7. Load from file  │ ┃");
+            Console.WriteLine("┃ │ 0. Exit            │ ┃");
+            Console.WriteLine("┃ │                    │ ┃");
+            Console.WriteLine("┠─┼────────────────────┼─┨");
+            Console.WriteLine("┗━┷━━━━━━━━━━━━━━━━━━━━┷━┛");
+
             do
             {
                 try
                 {
-                    Console.WriteLine("┏━┯━━━━━━━━━━━━━━━━━━━━┯━┓");
-                    Console.WriteLine("┠─┼────────────────────┼─┨");
-                    Console.WriteLine("┃ │                    │ ┃");
-                    Console.WriteLine("┃ │   Mishdef's Cafe   │ ┃");
-                    Console.WriteLine("┃ │ ------------------ │ ┃");
-                    Console.WriteLine("┃ │ 1. Add Item        │ ┃");
-                    Console.WriteLine("┃ │ 2. Remove Item     │ ┃");
-                    Console.WriteLine("┃ │ 3. Add Tip         │ ┃");
-                    Console.WriteLine("┃ │ 4. Display Bill    │ ┃");
-                    Console.WriteLine("┃ │ 5. Clear All       │ ┃");
-                    Console.WriteLine("┃ │ 6. Save to file    │ ┃");
-                    Console.WriteLine("┃ │ 7. Load from file  │ ┃");
-                    Console.WriteLine("┃ │ 0. Exit            │ ┃");
-                    Console.WriteLine("┃ │                    │ ┃");
-                    Console.WriteLine("┠─┼────────────────────┼─┨");
-                    Console.WriteLine("┗━┷━━━━━━━━━━━━━━━━━━━━┷━┛");
-
-                    switch (InputInt("\nEnter your choice: ", InputType.With, 0, 7))
+                    switch (InputInt("Enter your choice: ", InputType.With, 0, 7))
                     {
                         case 1:
                             {
@@ -287,23 +287,23 @@ namespace Mishdef_s_Cafe
 
             double totalCost = 0.0;
 
-            Console.WriteLine("\nDescription                    Price");
-            Console.WriteLine("------------------------- ----------");
+            Console.WriteLine("\nDescription               Price");
+            Console.WriteLine("-------------------- ----------");
             for (int i = 0; i < itemsAndCost[0].Length; i++)
             {
-                Console.WriteLine($"{itemsAndCost[0][i].PadRight(25)} {('$' + itemsAndCost[1][i]).PadLeft(10)}");
+                Console.WriteLine($"{itemsAndCost[0][i].PadRight(20)} {('$' + itemsAndCost[1][i]).PadLeft(10)}");
                 totalCost += double.Parse(itemsAndCost[1][i]);
             }
 
             double gstAmount = totalCost * 0.05;
 
-            Console.WriteLine("------------------------- ----------");
-            Console.WriteLine($"{"Net Total".PadLeft(25)} {('$' + totalCost.ToString("F2")).PadLeft(10)}");
-            Console.WriteLine($"{"Tip Amount".PadLeft(25)} {('$' + tipAmount.ToString("F2")).PadLeft(10)}");
-            Console.WriteLine($"{"GST Amount".PadLeft(25)} {('$' + gstAmount.ToString("F2")).PadLeft(10)}");
-            Console.WriteLine($"{"Total Amount".PadLeft(25)} {('$' + (totalCost + tipAmount + gstAmount).ToString("F2")).PadLeft(10)}");
+            Console.WriteLine("-------------------- ----------");
+            Console.WriteLine($"{"Net Total".PadLeft(20)} {('$' + totalCost.ToString("F2")).PadLeft(10)}");
+            Console.WriteLine($"{"Tip Amount".PadLeft(20)} {('$' + tipAmount.ToString("F2")).PadLeft(10)}");
+            Console.WriteLine($"{"GST Amount".PadLeft(20)} {('$' + gstAmount.ToString("F2")).PadLeft(10)}");
+            Console.WriteLine($"{"Total Amount".PadLeft(20)} {('$' + (totalCost + tipAmount + gstAmount).ToString("F2")).PadLeft(10)}");
 
-            Console.WriteLine("\nPress any key to continue...");
+            Console.WriteLine("\nPress any key to continue...\n");
             Console.CursorVisible = false;
             Console.ReadKey();
             Console.CursorVisible = true;
