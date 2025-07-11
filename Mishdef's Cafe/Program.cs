@@ -195,16 +195,9 @@ namespace Mishdef_s_Cafe
 
             MessageBox.Show(DeleteItem(itemIndex), "Message", Buttons.Ok);
 
-            if (items.Length != 0)
+            if (items.Length > 0)
             {
-                if (MessageBox.Show("Would you like to set a tip?", "Question", Buttons.YesNo) == Button.Yes)
-                {
-                    MenuAddTip();
-                }
-                else
-                {
-                    MessageBox.Show("Tip has been set to 0.0$", "Message", Buttons.Ok);
-                }
+                MenuAddTip();
             }
         }
 
